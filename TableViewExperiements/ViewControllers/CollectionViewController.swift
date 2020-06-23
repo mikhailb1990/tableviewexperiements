@@ -12,15 +12,29 @@ class CollectionViewController: UIViewController {
 
     var collectionView: UICollectionView?
     
+    let indexArray: [Int] = [0, 3, 5, 2]
+    var current: Int = 0
+    
     @IBAction func animateCollection(_ sender: UIButton) {
         
-        let index: Int = 6
-        UIView.animate(withDuration: 3, delay: 0, options: .curveEaseInOut, animations: {
-            self.collectionView?.scrollToItem(at: IndexPath(item: index, section: 0),
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
+            self.collectionView?.scrollToItem(at: IndexPath(item: self.indexArray[self.current], section: 0),
                                               at: .centeredHorizontally,
                                               animated: false)
             self.collectionView?.layoutIfNeeded()
-        }, completion: nil)
+        }, completion: {
+            _ in
+          
+            self.current += 1
+            if self.current >= self.indexArray.count {
+                self.current = 0
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.animateCollection(sender)
+            }
+            
+        })
         
         
     }
@@ -36,7 +50,7 @@ class CollectionViewController: UIViewController {
 
     fileprivate func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 15, bottom: 20, right: 15)
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 190, bottom: 20, right: 190)
         layout.itemSize = CGSize(width: 60, height: 60)
         layout.minimumInteritemSpacing = 10
         layout.scrollDirection = .horizontal
@@ -90,16 +104,26 @@ extension CollectionViewController: UICollectionViewDelegate {
 
 extension CollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let myCell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath)
-        if indexPath.item == 10 {
-            myCell.backgroundColor = .red
-        }
-        else {
-            myCell.backgroundColor = .blue
+        switch indexPath.item {
+        case 0:
+            myCell.backgroundColor = .systemRed
+        case 1:
+            myCell.backgroundColor = .systemBlue
+        case 2:
+            myCell.backgroundColor = .systemTeal
+        case 3:
+            myCell.backgroundColor = .systemGreen
+        case 4:
+            myCell.backgroundColor = .systemYellow
+        case 5:
+            myCell.backgroundColor = .systemOrange
+        default:
+            break
         }
         
         return myCell
